@@ -15,13 +15,13 @@ impl Hex {
     /// the Hex at the given terminal cell
     fn at_cell(col: u32, row: u32) -> Self {
         Self {
-            x: col / 3,
-            y: (row + (col / 3).rem_euclid(2)) / 2,
+            x: col,
+            y: (row + (col) % 2) / 2,
         }
     }
     /// the center of this Hex, in terminal coords
     fn center(&self) -> (u32, u32) {
-        (self.x * 3, self.y * 2 + (self.x + 1).rem_euclid(2))
+        (self.x * 3, self.y * 2 + (self.x + 1) % 2)
     }
 }
 
@@ -47,16 +47,14 @@ fn main() -> Result<(), io::Error> {
 
     for t in 0.. {
         for row in 0..height {
-            for col in 0..width {
-                write!(
-                    buf,
-                    "{}{}{}",
+            for col in 0..(width/3) {
+                write!(buf,
+                    "{}  {}{}",
                     Bg(color(col, row, t)),
                     Fg(color(col + 1, row, t)),
-                    match (col + 3 * row) % 6 {
-                        2 => "◥",
-                        5 => "◢",
-                        _ => " ",
+                    match (row + col) % 2 {
+                        0 => "◥",
+                        _ => "◢",
                     }
                 )?;
             }
